@@ -4,6 +4,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from .models import Author, Book
 from .serializers import AuthorSerializer, BookSerializer
+from rest_framework import generics
 
 
 # Create your views here.
@@ -11,11 +12,20 @@ from .serializers import AuthorSerializer, BookSerializer
 
 
 
-class AuthorGetView(APIView):
-    def get(self, request, *args, **kwargs):
-        authors = Author.objects.all()
-        serializer = AuthorSerializer(authors, many=True)
-        return Response(serializer.data)
+# class AuthorGetView(APIView):
+#     def get(self, request, *args, **kwargs):
+#         authors = Author.objects.all()
+#         serializer = AuthorSerializer(authors, many=True)
+#         return Response(serializer.data)
+
+class AuthorGetView(generics.ListAPIView):
+    queryset = Author.objects.all()
+    serializer_class = AuthorSerializer
+
+class AuthorUpdateView(generics.CreateAPIView):
+    queryset = Author.objects.all()
+    serializer_class = AuthorSerializer
+
 
 class AuthorDeleteView(APIView):
     def delete(self, request, *args, **kwargs):
@@ -23,13 +33,13 @@ class AuthorDeleteView(APIView):
         author.delete()
         return Response({'message' : 'Task deleted successfully'}) 
     
-class AuthorUpdateView(APIView):
-    def post(self, request):
-        serializer = AuthorSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        return Response(request.data)
+# class AuthorUpdateView(APIView):
+#     def post(self, request):
+#         serializer = AuthorSerializer(data=request.data)
+#         if serializer.is_valid():
+#             serializer.save()
+#             return Response(serializer.data)
+#         return Response(request.data)
     
 class BooksGetView(APIView):
     def get(self, request, *args, **kwargs):
